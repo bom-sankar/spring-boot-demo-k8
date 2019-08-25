@@ -1,0 +1,71 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-frontend
+spec:
+  selector:
+    app: demo-frontend
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demo-frontend
+spec:
+  selector:
+    matchLabels:
+      app: demo-frontend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: demo-frontend
+    spec:
+      containers:
+        - name: demo-frontend
+          image: demo-frontend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-backend
+  labels:
+    app: demo-backend
+spec:
+  selector:
+    app: demo-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: demo-backend
+  labels:
+    app: demo-backend
+spec:
+  selector:
+    matchLabels:
+      app: demo-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-backend
+    spec:
+      containers:
+        - name: demo-backend
+          image: demo-backend:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
